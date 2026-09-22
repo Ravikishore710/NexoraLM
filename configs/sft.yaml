@@ -1,0 +1,22 @@
+datasets:
+  oasst1:
+    name: "OpenAssistant/oasst1"
+    target_examples: 8000
+    language: "en"
+  reasoning:
+    name: "HuggingFaceH4/Bespoke-Stratos-17k"
+    target_examples: 4000
+
+training:
+  micro_batch_size: 4
+  gradient_accumulation_steps: 8
+  learning_rate: 2.0e-5
+  min_learning_rate: 2.0e-6
+  weight_decay: 0.01
+  max_seq_len: 2048
+  epochs: 3
+  warmup_ratio: 0.03
+  lr_schedule: "cosine"
+  mixed_precision: "fp16"
+  loss_masking: "assistant_only"
+  seed: 42

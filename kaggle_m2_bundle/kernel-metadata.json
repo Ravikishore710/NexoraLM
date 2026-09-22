@@ -1,0 +1,14 @@
+{
+  "id": "raviikishore07/nexoralm-m2-validation",
+  "title": "NexoraLM M2 Validation",
+  "code_file": "main.py",
+  "language": "python",
+  "kernel_type": "script",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": []
+}

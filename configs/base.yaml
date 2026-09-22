@@ -1,0 +1,25 @@
+model:
+  vocab_size: 32768
+  max_seq_len: 2048
+  hidden_size: 768
+  num_layers: 16
+  num_query_heads: 12
+  num_kv_heads: 4
+  head_dim: 64
+  ffn_hidden_size: 2048
+  norm_eps: 1.0e-5
+  tie_word_embeddings: true
+  bias: false
+  rope_base: 10000.0
+
+tokenizer:
+  type: "bpe"
+  vocab_size: 32768
+  special_tokens:
+    bos: "<BOS>"
+    eos: "<EOS>"
+    pad: "<PAD>"
+    unk: "<UNK>"
+    system: "<|system|>"
+    user: "<|user|>"
+    assistant: "<|assistant|>"

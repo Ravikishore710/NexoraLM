@@ -1,0 +1,17 @@
+dpo:
+  beta: 0.1
+  dataset: "argilla/ultrafeedback-binarized-preferences-cleaned"
+  train_pairs: 8000
+  eval_pairs: 1000
+  max_seq_len: 2048
+
+training:
+  micro_batch_size: 2
+  gradient_accumulation_steps: 16
+  learning_rate: 5.0e-7
+  min_learning_rate: 5.0e-8
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  lr_schedule: "cosine"
+  mixed_precision: "fp16"
+  seed: 42

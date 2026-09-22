@@ -1,0 +1,24 @@
+dataset:
+  name: "HuggingFaceFW/fineweb-edu"
+  subset: "sample-10BT"
+  train_tokens: 300000000
+  val_tokens: 10000000
+  test_tokens: 10000000
+  seq_len: 2048
+
+training:
+  micro_batch_size: 2
+  gradient_accumulation_steps: 32
+  learning_rate: 3.0e-4
+  min_learning_rate: 3.0e-5
+  weight_decay: 0.1
+  beta1: 0.9
+  beta2: 0.95
+  eps: 1.0e-8
+  grad_clip: 1.0
+  warmup_ratio: 0.02
+  lr_schedule: "cosine"
+  mixed_precision: "fp16"
+  save_every_steps: 500
+  eval_every_steps: 250
+  seed: 42

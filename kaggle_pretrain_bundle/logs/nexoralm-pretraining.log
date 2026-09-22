@@ -1,0 +1,58 @@
+[{"stream_name":"stdout","time":12.405422685,"data":"[2026-09-21 18:12:13] Starting NexoraLM-126M Pretraining \u0026 Compute Gate\n"}
+,{"stream_name":"stdout","time":12.676025683,"data":"[2026-09-21 18:12:13] Using accelerator: cuda\n"}
+,{"stream_name":"stdout","time":12.723498114,"data":"[2026-09-21 18:12:13] GPU: Tesla T4 (14.56 GB VRAM)\n"}
+,{"stream_name":"stdout","time":12.723534729,"data":"[2026-09-21 18:12:13] Step 1: Sampling 15M tokens from FineWeb-Edu training split...\n"}
+,{"stream_name":"stderr","time":12.927568656,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stdout","time":18.047955649,"data":"[2026-09-21 18:12:19] Collected 6188 documents (~30.0M characters).\n"}
+,{"stream_name":"stdout","time":18.048030133,"data":"[2026-09-21 18:12:19] Step 2: Training Byte-level BPE tokenizer to exact 32,768 vocabulary...\n"}
+,{"stream_name":"stdout","time":22.970820526,"data":"\n"}
+,{"stream_name":"stdout","time":23.240748873,"data":"\n"}
+,{"stream_name":"stdout","time":25.233600828,"data":"\n"}
+,{"stream_name":"stdout","time":25.346639923,"data":"[2026-09-21 18:12:26] Tokenizer trained and saved (Vocab size: 32768).\n"}
+,{"stream_name":"stdout","time":25.346686506,"data":"[2026-09-21 18:12:26] Step 3: Instantiating NexoraLM-126M baseline architecture...\n"}
+,{"stream_name":"stdout","time":28.041904294,"data":"[2026-09-21 18:12:29] NexoraLM parameter count: 125,854,464 (~125.85M parameters)\n"}
+,{"stream_name":"stdout","time":28.04194054,"data":"[2026-09-21 18:12:29] Step 4: Executing T4 Throughput Gate (200 forward/backward steps)...\n"}
+,{"stream_name":"stderr","time":34.600582642,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":34.600632795,"data":"  File \"/kaggle/src/script.py\", line 307, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":34.600820333,"data":"    run_pretraining_and_gate()\n"}
+,{"stream_name":"stderr","time":34.600972226,"data":"  File \"/kaggle/src/script.py\", line 243, in run_pretraining_and_gate\n"}
+,{"stream_name":"stderr","time":34.601064293,"data":"    _, loss = model(dummy_input, labels=dummy_labels)\n"}
+,{"stream_name":"stderr","time":34.601213803,"data":"              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":34.601231826,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1776, in _wrapped_call_impl\n"}
+,{"stream_name":"stderr","time":34.605443854,"data":"    return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":34.605567085,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":34.605580133,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1787, in _call_impl\n"}
+,{"stream_name":"stderr","time":34.606155635,"data":"    return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":34.606234075,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":34.606308055,"data":"  File \"/kaggle/src/script.py\", line 163, in forward\n"}
+,{"stream_name":"stderr","time":34.606476112,"data":"    h = layer(h, cos, sin)\n"}
+,{"stream_name":"stderr","time":34.6065112,"data":"        ^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":34.606518005,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1776, in _wrapped_call_impl\n"}
+,{"stream_name":"stderr","time":34.607031218,"data":"    return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":34.607114955,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":34.60714137,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1787, in _call_impl\n"}
+,{"stream_name":"stderr","time":34.6075923,"data":"    return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":34.60765173,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":34.607667464,"data":"  File \"/kaggle/src/script.py\", line 106, in forward\n"}
+,{"stream_name":"stderr","time":34.607862078,"data":"    x = x + self.attn(self.norm1(x), cos, sin)\n"}
+,{"stream_name":"stderr","time":34.60799451,"data":"            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":34.608042228,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1776, in _wrapped_call_impl\n"}
+,{"stream_name":"stderr","time":34.608478995,"data":"    return self._call_impl(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":34.608569343,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":34.608602348,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py\", line 1787, in _call_impl\n"}
+,{"stream_name":"stderr","time":34.609175746,"data":"    return forward_call(*args, **kwargs)\n"}
+,{"stream_name":"stderr","time":34.609260272,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":34.609269164,"data":"  File \"/kaggle/src/script.py\", line 93, in forward\n"}
+,{"stream_name":"stderr","time":34.609400675,"data":"    attn = F.softmax(scores, dim=-1, dtype=torch.float32).type_as(q)\n"}
+,{"stream_name":"stderr","time":34.609582788,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":34.609592346,"data":"  File \"/usr/local/lib/python3.12/dist-packages/torch/nn/functional.py\", line 2159, in softmax\n"}
+,{"stream_name":"stderr","time":34.610189572,"data":"    ret = input.softmax(dim, dtype=dtype)\n"}
+,{"stream_name":"stderr","time":34.610266632,"data":"          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":34.610344935,"data":"torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 768.00 MiB. GPU 0 has a total capacity of 14.56 GiB of which 584.81 MiB is free. Including non-PyTorch memory, this process has 13.99 GiB memory in use. Of the allocated memory 13.14 GiB is allocated by PyTorch, and 743.37 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)\n"}
+,{"stream_name":"stderr","time":39.918996666,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":39.919026021,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":40.214819479,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":40.214855123,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":41.007477716,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":42.460677114,"data":"[NbConvertApp] Writing 347557 bytes to __results__.html\n"}
+]

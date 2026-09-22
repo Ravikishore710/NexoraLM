@@ -5,6 +5,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
+import os
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.inference.generator import NexoraGenerator
@@ -20,6 +22,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+website_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "website")
+if os.path.exists(website_dir):
+    app.mount("/chat", StaticFiles(directory=website_dir, html=True), name="website")
 
 
 model_instance: Optional[NexoraLM] = None
@@ -110,7 +116,10 @@ def create_chat_completion(req: ChatCompletionRequest):
         raise HTTPException(status_code=503, detail="Model not initialized")
 
     formatted = tokenizer_instance.apply_chat_template([m.model_dump() for m in req.messages])
+    # Append assistant trigger token so model generates the response directly
     prompt = tokenizer_instance.decode(formatted["input_ids"], skip_special_tokens=False)
+    if not prompt.endswith("<|assistant|>\n"):
+        prompt += "<|assistant|>\n"
 
     if req.stream:
         def stream_chat():
@@ -121,6 +130,9 @@ def create_chat_completion(req: ChatCompletionRequest):
                 top_p=req.top_p,
                 top_k=req.top_k
             ):
+                # Filter out special tags if any
+                if token_text in ["<EOS>", "<|assistant|>", "<|user|>", "<|system|>"]:
+                    break
                 payload = {
                     "id": f"chatcmpl-{int(time.time()*1000)}",
                     "choices": [{"delta": {"content": token_text}, "finish_reason": None}]
@@ -141,3 +153,4 @@ def create_chat_completion(req: ChatCompletionRequest):
         "id": f"chatcmpl-{int(time.time()*1000)}",
         "choices": [{"message": {"role": "assistant", "content": text}, "finish_reason": "stop"}]
     }
+

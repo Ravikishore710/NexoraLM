@@ -18,6 +18,23 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentId = conversations.length > 0 ? conversations[0].id : null;
   let isGenerating = false;
 
+  const backendStatus = document.getElementById('backendStatus');
+  async function checkBackendHealth() {
+    try {
+      const res = await fetch('http://localhost:8000/health');
+      if (res.ok) {
+        backendStatus.innerHTML = '<span class="status-dot online"></span><span class="status-text">NexoraLM Model Live</span>';
+      } else {
+        backendStatus.innerHTML = '<span class="status-dot" style="background: #f59e0b; box-shadow: 0 0 6px #f59e0b;"></span><span class="status-text">Model Initializing</span>';
+      }
+    } catch (e) {
+      backendStatus.innerHTML = '<span class="status-dot" style="background: #ef4444; box-shadow: 0 0 6px #ef4444;"></span><span class="status-text">Backend Offline (:8000)</span>';
+    }
+  }
+  checkBackendHealth();
+  setInterval(checkBackendHealth, 5000);
+
+
   // Auto-resize textarea
   chatInput.addEventListener('input', () => {
     chatInput.style.height = 'auto';
@@ -220,85 +237,57 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function streamResponse(allMessages, onChunk, onDone) {
-    const lastUserPrompt = allMessages[allMessages.length - 1].content;
-
-    // 1. Try FastAPI local server first
     try {
       const response = await fetch('http://localhost:8000/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: allMessages,
-          max_tokens: 256,
+          max_tokens: 180,
           temperature: 0.7,
           stream: true
         })
       });
 
-      if (response.ok) {
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
+      if (!response.ok) {
+        throw new Error(`NexoraLM Backend HTTP ${response.status}: ${response.statusText}`);
+      }
 
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
 
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop();
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
 
-          for (const line of lines) {
-            const trimmed = line.trim();
-            if (trimmed.startsWith('data: ')) {
-              const dataStr = trimmed.slice(6);
-              if (dataStr === '[DONE]') {
-                onDone();
-                return;
-              }
-              try {
-                const parsed = JSON.parse(dataStr);
-                const delta = parsed.choices?.[0]?.delta?.content || parsed.choices?.[0]?.text || '';
-                if (delta) onChunk(delta);
-              } catch (e) {}
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('data: ')) {
+            const dataStr = trimmed.slice(6);
+            if (dataStr === '[DONE]') {
+              onDone();
+              return;
             }
+            try {
+              const parsed = JSON.parse(dataStr);
+              const delta = parsed.choices?.[0]?.delta?.content || parsed.choices?.[0]?.text || '';
+              if (delta) onChunk(delta);
+            } catch (e) {}
           }
         }
-        onDone();
-        return;
       }
+      onDone();
+      return;
     } catch (err) {
-      // Backend not running, proceed to fast local response generator
+      console.error('Inference error:', err);
+      onChunk(`[Error connecting to NexoraLM backend]: ${err.message}. Please ensure the server is active: 'python scripts/serve.py --checkpoint checkpoints/nexoralm_aligned_300m.pt --port 8000'`);
+      onDone();
     }
-
-    // 2. Local intelligent response generator
-    const answer = generateLocalAnswer(lastUserPrompt);
-    const words = answer.split(' ');
-
-    for (let i = 0; i < words.length; i++) {
-      await new Promise(r => setTimeout(r, 25));
-      onChunk(words[i] + ' ');
-    }
-    onDone();
-  }
-
-  function generateLocalAnswer(prompt) {
-    const p = prompt.toLowerCase();
-    if (p.includes('gqa') || p.includes('grouped')) {
-      return "Grouped-Query Attention (GQA) groups query heads together so that multiple query heads share a single Key and Value head. In NexoraLM, we use 12 Query heads and 4 Key/Value heads (a 3:1 sharing ratio). This reduces the memory footprint and bandwidth required for the KV-cache by 66.7% during autoregressive token generation while retaining expressiveness near full Multi-Head Attention.";
-    }
-    if (p.includes('rope') || p.includes('rotary') || p.includes('position')) {
-      return "Rotary Position Embedding (RoPE) encodes relative token positions directly into query and key representations via complex rotation matrices. Because the dot product between query and key depends purely on their relative distance (m - n), RoPE generalizes across long contexts seamlessly without requiring trainable positional parameters.";
-    }
-    if (p.includes('lora') || p.includes('qlora') || p.includes('adapter')) {
-      return "LoRA freezes the base model weights W and injects low-rank trainable decomposition matrices (W + (alpha / r) * B @ A). In NexoraLM, we adapt the Q, K, V, and O projections with rank r=16, training only 1,310,720 parameters (1.03% of the model). QLoRA quantizes the base weights down to 4-bit, dropping memory footprint to 64.7 MB while keeping full adapter quality.";
-    }
-    if (p.includes('deep learning') || p.includes('neural network') || p.includes('learn')) {
-      return "Deep learning is a subset of machine learning based on multi-layered neural networks. Models learn representational hierarchies: early layers capture primitive features (like token tokens or syntax), while deeper layers compose them into abstract semantics. Training uses gradient descent with backpropagation to iteratively minimize loss on target data.";
-    }
-    if (p.includes('quantiz') || p.includes('int8') || p.includes('int4')) {
-      return "Quantization maps high-precision FP16 weights into discrete integer formats. In NexoraLM, our per-channel symmetric INT8 quantization compressed the model from 240 MB to 120.55 MB with a mean relative error of only 0.0078 (<0.8%). Our INT4 group-wise quantization reached 64.69 MB (3.7x compression).";
-    }
-    return `NexoraLM is a 126M parameter decoder-only language model trained from scratch on ~300M tokens from FineWeb-Edu. It features 16 Transformer layers, RMSNorm, RoPE, SwiGLU, and 32k Byte-level BPE, followed by SFT and DPO alignment. You asked: "${prompt}". Feel free to ask more about any machine learning or technical concept!`;
   }
 });
+

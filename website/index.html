@@ -3,396 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NexoraLM — 126M Decoder-Only Architecture & Full Systems Lifecycle</title>
-  <meta name="description" content="A compact, custom 126M-parameter decoder-only language model built from first principles in PyTorch across Pretraining, SFT, LoRA, QLoRA, DPO, Quantization, and API Serving.">
+  <title>NexoraLM — Chat</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="noise-overlay"></div>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-avatar">N</div>
+          <div class="brand-text">
+            <span class="brand-title">NexoraLM</span>
+            <span class="brand-subtitle">126M Foundation Model</span>
+          </div>
+        </div>
+        <button type="button" class="btn-new-chat" id="btnNewChat" title="New Conversation">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>New Chat</span>
+        </button>
+      </div>
 
-  <!-- Navigation -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <a href="#" class="brand">
-        <span>NEXORA<span class="gradient-text">LM</span></span>
-        <span class="brand-badge">126M</span>
-      </a>
-      <div class="nav-links">
-        <a href="#overview" class="nav-link">Overview</a>
-        <a href="#architecture" class="nav-link">Architecture</a>
-        <a href="#pipeline" class="nav-link">Lifecycle</a>
-        <a href="#benchmarks" class="nav-link">Benchmarks</a>
-        <a href="#demo" class="nav-link">Live Console</a>
-        <a href="https://github.com/Ravikishore710/NexoraLM" target="_blank" class="btn-github">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <div class="sidebar-section-title">Recent Conversations</div>
+      <div class="chat-history-list" id="chatHistoryList">
+        <!-- Dynamically rendered conversations -->
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="backend-status" id="backendStatus">
+          <span class="status-dot online"></span>
+          <span class="status-text">NexoraLM Ready</span>
+        </div>
+        <a href="https://github.com/Ravikishore710/NexoraLM" target="_blank" class="github-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
           </svg>
-          <span>GitHub</span>
+          <span>Ravikishore710/NexoraLM</span>
         </a>
       </div>
-    </div>
-  </nav>
+    </aside>
 
-  <!-- Hero Section -->
-  <header class="hero" id="overview">
-    <div class="hero-pill">
-      <span class="hero-pill-dot"></span>
-      <span>Proof-of-Lifecycle 126M Decoder-Only Foundation Model</span>
-    </div>
-    <h1 class="hero-title">
-      Built from Scratch.<br>
-      <span class="gradient-text">Engineered for the Full Lifecycle.</span>
-    </h1>
-    <p class="hero-subtitle">
-      NexoraLM is an open-weights, compact 126M parameter language model designed to demonstrate complete systems depth: from first-principles PyTorch architecture and 300M token pretraining on NVIDIA Tesla T4, through SFT, LoRA, QLoRA, DPO alignment, INT8/INT4 quantization, and production streaming inference.
-    </p>
-    <div class="hero-actions">
-      <a href="#pipeline" class="btn-primary">Explore Full Lifecycle</a>
-      <a href="#demo" class="btn-secondary">Try Live Console</a>
-      <a href="https://github.com/Ravikishore710/NexoraLM" target="_blank" class="btn-secondary">View Source Code</a>
-    </div>
+    <!-- Main Chat Workspace -->
+    <main class="chat-main">
+      <!-- Top header -->
+      <header class="chat-topbar">
+        <div class="topbar-left">
+          <button type="button" class="btn-icon" id="btnToggleSidebar" title="Toggle Sidebar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="3" x2="9" y2="21"></line>
+            </svg>
+          </button>
+          <div class="chat-session-title" id="currentChatTitle">New Chat</div>
+        </div>
+        <div class="topbar-right">
+          <button type="button" class="btn-clear-chat" id="btnClearChat" title="Clear messages">Clear Chat</button>
+        </div>
+      </header>
 
-    <!-- Stats Grid -->
-    <div class="hero-stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Parameters</div>
-        <div class="stat-value">125.85M</div>
-        <div class="stat-desc">Tied Input/Output Embeddings</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Pretraining Throughput</div>
-        <div class="stat-value">11,042 tok/s</div>
-        <div class="stat-desc">Measured on Tesla T4 (FP16/SDPA)</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Pretrained Tokens</div>
-        <div class="stat-value">299.7M</div>
-        <div class="stat-desc">FineWeb-Edu Training Split</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">DPO Reward Margin</div>
-        <div class="stat-value">+5.8164</div>
-        <div class="stat-desc">100% Preference Accuracy</div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Architecture Section -->
-  <section class="section" id="architecture">
-    <div class="section-header">
-      <div class="section-tag">First-Principles Design</div>
-      <h2 class="section-title">Compact GQA Architecture</h2>
-      <p class="section-desc">Every layer built from fundamental PyTorch tensor operations with zero black-box dependencies.</p>
-    </div>
-
-    <table class="arch-table">
-      <thead>
-        <tr>
-          <th>Component</th>
-          <th>Configuration</th>
-          <th>Design Rationale</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Attention</strong></td>
-          <td>Grouped-Query Attention (12 Q, 4 KV heads, Head Dim 64)</td>
-          <td>3:1 GQA sharing reduces KV-cache memory bandwidth by 66.7% while maintaining MHA expressive capacity.</td>
-        </tr>
-        <tr>
-          <td><strong>Normalization</strong></td>
-          <td>RMSNorm (Pre-LN, &epsilon; = 1e-5)</td>
-          <td>Replaces standard LayerNorm by removing mean-centering overhead; accelerates training throughput by ~7%.</td>
-        </tr>
-        <tr>
-          <td><strong>Positional Embedding</strong></td>
-          <td>Rotary Positional Embeddings (RoPE, &theta; = 10,000)</td>
-          <td>Relative positional encoding preserved across inner products with zero trainable parameters.</td>
-        </tr>
-        <tr>
-          <td><strong>Feed-Forward</strong></td>
-          <td>SwiGLU (Hidden 768 &rarr; Intermediate 2048 &rarr; 768)</td>
-          <td>Gated linear units with SiLU activation provide superior non-linear representational density.</td>
-        </tr>
-        <tr>
-          <td><strong>Vocabulary & Tying</strong></td>
-          <td>Exact 32,768 Byte-level BPE</td>
-          <td>Weight-tied LM head eliminates 25.17M redundant parameters and enforces symmetric vector space.</td>
-        </tr>
-        <tr>
-          <td><strong>Linear Biases</strong></td>
-          <td>Disabled across all projections</td>
-          <td>Modern standard (LLaMA/Mistral style) reducing parameter clutter and improving gradient flow.</td>
-        </tr>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- Full Lifecycle Timeline -->
-  <section class="section" id="pipeline">
-    <div class="section-header">
-      <div class="section-tag">The 11-Stage Pipeline</div>
-      <h2 class="section-title">Complete Model Lifecycle</h2>
-      <p class="section-desc">Empirically logged and executed across training, alignment, and efficiency benchmarks.</p>
-    </div>
-
-    <div class="pipeline-timeline">
-      <!-- M1 -->
-      <div class="pipeline-card">
-        <div class="step-badge">M1</div>
-        <div class="step-info">
-          <h4>Byte-Level BPE Tokenizer</h4>
-          <p>Trained strictly from FineWeb-Edu training corpus pool with exact 32,768 vocabulary boundary.</p>
-        </div>
-        <div class="step-metric">
-          Vocab: <span class="metric-highlight">32,768</span> | Special Tokens: 7 | Assistant Masking: <span class="metric-highlight">-100</span>
-        </div>
-        <div class="step-status">
-          <span class="status-pill">Verified</span>
-        </div>
-      </div>
-
-      <!-- M2 -->
-      <div class="pipeline-card">
-        <div class="step-badge">M2</div>
-        <div class="step-info">
-          <h4>Micro-Model Sanity Gate</h4>
-          <p>Overfitting and checkpoint restoration verified on TinyStories train split.</p>
-        </div>
-        <div class="step-metric">
-          Params: <span class="metric-highlight">18.88M</span> | Overfit Loss: <span class="metric-highlight">0.0054</span> | Checkpoint: Bitwise Equal
-        </div>
-        <div class="step-status">
-          <span class="status-pill">Verified</span>
-        </div>
-      </div>
-
-      <!-- M4 Gate -->
-      <div class="pipeline-card">
-        <div class="step-badge">M4</div>
-        <div class="step-info">
-          <h4>Tesla T4 Pretraining Throughput Gate</h4>
-          <p>Compute gate enforcing memory bounds and throughput criteria before full pretraining run.</p>
-        </div>
-        <div class="step-metric">
-          Throughput: <span class="metric-highlight">11,042 tok/s</span> | Peak VRAM: <span class="metric-highlight">5.85 GB</span> | Decision: <span class="metric-highlight">GO</span>
-        </div>
-        <div class="step-status">
-          <span class="status-pill">Verified</span>
-        </div>
-      </div>
-
-      <!-- M4 Main -->
-      <div class="pipeline-card">
-        <div class="step-badge">M4+</div>
-        <div class="step-info">
-          <h4>300M Token Base Pretraining</h4>
-          <p>Full 2,288 optimization steps executed on Kaggle GPU on FineWeb-Edu stream.</p>
-        </div>
-        <div class="step-metric">
-          Tokens: <span class="metric-highlight">299,746,304</span> | Final Loss: <span class="metric-highlight">3.8744</span> | Duration: 8.52h
-        </div>
-        <div class="step-status">
-          <span class="status-pill">Verified</span>
-        </div>
-      </div>
-
-      <!-- M5 -->
-      <div class="pipeline-card">
-        <div class="step-badge">M5</div>
-        <div class="step-info">
-          <h4>Supervised Fine-Tuning (SFT)</h4>
-          <p>Instruction tuning across OASST1 and reasoning pairs with assistant-only loss masking.</p>
-        </div>
-        <div class="step-metric">
-          Base Loss: 3.76 &rarr; Val Loss: <span class="metric-highlight">3.5177</span> | Assistant PPL: <span class="metric-highlight">33.71</span>
-        </div>
-        <div class="step-status">
-          <span class="status-pill">Verified</span>
-        </div>
-      </div>
-
-      <!-- M6 & M7 -->
-      <div class="pipeline-card">
-        <div class="step-badge">M6/7</div>
-        <div class="step-info">
-          <h4>LoRA & QLoRA Benchmarks</h4>
-          <p>Low-rank adaptation (r=16, &alpha;=32) across Q, K, V, O projections with 4-bit base weights.</p>
-        </div>
-        <div class="step-metric">
-          Trainable: <span class="metric-highlight">1,310,720 params</span> (1.03%) | Base Footprint: <span class="metric-highlight">64.7 MB (4-bit)</span>
-        </div>
-        <div class="step-status">
-          <span class="status-pill">Verified</span>
-        </div>
-      </div>
-
-      <!-- M8 -->
-      <div class="pipeline-card">
-        <div class="step-badge">M8</div>
-        <div class="step-info">
-          <h4>Direct Preference Optimization (DPO)</h4>
-          <p>Pairwise preference alignment using closed-form implicit reward formulation with frozen reference.</p>
-        </div>
-        <div class="step-metric">
-          Loss: 0.6931 &rarr; <span class="metric-highlight">0.0030</span> | Reward Margin: <span class="metric-highlight">+5.8164</span> (100% Acc)
-        </div>
-        <div class="step-status">
-          <span class="status-pill">Verified</span>
-        </div>
-      </div>
-
-      <!-- M10 -->
-      <div class="pipeline-card">
-        <div class="step-badge">M10</div>
-        <div class="step-info">
-          <h4>Post-Training Quantization (INT8 / INT4)</h4>
-          <p>Static post-training quantization across all 113 linear projection matrices.</p>
-        </div>
-        <div class="step-metric">
-          INT8: <span class="metric-highlight">120.55 MB (0.0078 err)</span> | INT4: <span class="metric-highlight">64.69 MB (0.1006 err)</span>
-        </div>
-        <div class="step-status">
-          <span class="status-pill">Verified</span>
-        </div>
-      </div>
-
-      <!-- M11 -->
-      <div class="pipeline-card">
-        <div class="step-badge">M11</div>
-        <div class="step-info">
-          <h4>OpenAI-Compatible FastAPI Server</h4>
-          <p>Asynchronous inference engine with Server-Sent Events (SSE) streaming token output.</p>
-        </div>
-        <div class="step-metric">
-          Endpoints: <span class="metric-highlight">/health, /model, /v1/chat/completions</span> | SSE Stream: Active
-        </div>
-        <div class="step-status">
-          <span class="status-pill">Verified</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Interactive Live Demo Section -->
-  <section class="section" id="demo">
-    <div class="section-header">
-      <div class="section-tag">Interactive Simulation</div>
-      <h2 class="section-title">NexoraLM Inference Console</h2>
-      <p class="section-desc">Experience autoregressive token generation with live KV-cache reuse telemetry.</p>
-    </div>
-
-    <div class="interactive-demo-container">
-      <div class="chat-console">
-        <div class="console-header">
-          <div class="console-dots">
-            <span class="dot red"></span>
-            <span class="dot yellow"></span>
-            <span class="dot green"></span>
-          </div>
-          <div class="console-title">nexoralm-aligned-126m (FastAPI SSE)</div>
-          <div style="width: 40px;"></div>
-        </div>
-        <div class="chat-messages" id="chatMessages">
-          <div class="msg assistant">
-            Hello! I am NexoraLM, a 126M parameter decoder-only language model trained from scratch. Ask me about Transformer architectures, Grouped-Query Attention, RoPE, or post-training quantization!
+      <!-- Messages area -->
+      <div class="messages-container" id="messagesContainer">
+        <div class="welcome-screen" id="welcomeScreen">
+          <div class="welcome-avatar">N</div>
+          <h1 class="welcome-title">How can NexoraLM help you today?</h1>
+          <p class="welcome-subtitle">Ask questions, explore topics, generate ideas, or learn about machine learning architectures.</p>
+          
+          <div class="suggestion-grid">
+            <button type="button" class="suggestion-card" data-prompt="What is deep learning and how does a neural network learn?">
+              <span class="suggestion-title">Explain Deep Learning</span>
+              <span class="suggestion-desc">Understand weights, layers, and backpropagation</span>
+            </button>
+            <button type="button" class="suggestion-card" data-prompt="Why use Grouped-Query Attention (GQA) instead of standard Multi-Head Attention?">
+              <span class="suggestion-title">Grouped-Query Attention</span>
+              <span class="suggestion-desc">How 3:1 head sharing cuts KV-cache bandwidth</span>
+            </button>
+            <button type="button" class="suggestion-card" data-prompt="How do Rotary Position Embeddings (RoPE) encode token distance?">
+              <span class="suggestion-title">RoPE Mechanism</span>
+              <span class="suggestion-desc">Relative distance preservation via 2D rotations</span>
+            </button>
+            <button type="button" class="suggestion-card" data-prompt="What is the difference between LoRA and QLoRA fine-tuning?">
+              <span class="suggestion-title">LoRA vs QLoRA</span>
+              <span class="suggestion-desc">Adapter ranks and 4-bit quantized base weights</span>
+            </button>
           </div>
         </div>
-        <form class="chat-input-row" id="chatForm">
-          <input type="text" class="chat-input" id="chatInput" placeholder="Ask NexoraLM a question..." autocomplete="off">
-          <button type="submit" class="btn-send">Send</button>
+
+        <div class="messages-list" id="messagesList"></div>
+      </div>
+
+      <!-- Bottom Chat Input Bar -->
+      <div class="chat-input-area">
+        <form class="chat-input-form" id="chatForm">
+          <textarea 
+            class="chat-textarea" 
+            id="chatInput" 
+            placeholder="Send a message to NexoraLM..." 
+            rows="1"
+            autofocus></textarea>
+          <button type="submit" class="btn-send-message" id="btnSend" title="Send message" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
         </form>
-      </div>
-
-      <div class="demo-metrics">
-        <div class="metric-box">
-          <div class="metric-box-title">Inference Telemetry</div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-dim);">KV-CACHE STATUS</div>
-              <div style="font-size: 1.1rem; font-weight: 700; color: var(--success);" id="kvStatus">Active (Iterative)</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-dim);">TIME TO FIRST TOKEN</div>
-              <div style="font-size: 1.1rem; font-weight: 700; color: var(--primary);" id="ttft">34.2 ms</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-dim);">CONTEXT LENGTH</div>
-              <div style="font-size: 1.1rem; font-weight: 700;">2048 Tokens</div>
-            </div>
-            <div>
-              <div style="font-size: 0.75rem; color: var(--text-dim);">ACTIVE KV HEADS</div>
-              <div style="font-size: 1.1rem; font-weight: 700;">4 (3:1 Ratio)</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="metric-box">
-          <div class="metric-box-title">Live Token Streaming Buffer</div>
-          <div class="token-stream-box" id="tokenStreamBox">
-            Waiting for prompt input...
-          </div>
-        </div>
-
-        <div class="metric-box">
-          <div class="metric-box-title">Quick Prompt Presets</div>
-          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-            <button type="button" class="btn-secondary preset-btn" data-prompt="Why use GQA over standard Multi-Head Attention?" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">GQA Benefits</button>
-            <button type="button" class="btn-secondary preset-btn" data-prompt="Explain how Rotary Position Embeddings (RoPE) work." style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">RoPE Mechanism</button>
-            <button type="button" class="btn-secondary preset-btn" data-prompt="What is the difference between LoRA and QLoRA?" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">LoRA vs QLoRA</button>
-          </div>
+        <div class="input-footer-note">
+          NexoraLM 126M &bull; Pretrained on 300M tokens &bull; SFT & DPO aligned
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- Quickstart Code Section -->
-  <section class="section" id="benchmarks">
-    <div class="section-header">
-      <div class="section-tag">Developer Setup</div>
-      <h2 class="section-title">Run in 3 Commands</h2>
-      <p class="section-desc">Clone, run the verified unit test suite, and launch the inference server locally.</p>
-    </div>
-
-    <div class="code-block-container">
-      <div class="code-header">
-        <span>BASH / POWERSHELL</span>
-        <span>terminal</span>
-      </div>
-      <pre class="code-content"><code><span style="color: #64748b;"># 1. Clone the repository</span>
-git clone https://github.com/Ravikishore710/NexoraLM.git
-cd NexoraLM
-
-<span style="color: #64748b;"># 2. Run all 22 automated unit tests</span>
-pytest tests/ -v
-
-<span style="color: #64748b;"># 3. Start OpenAI-compatible FastAPI server with SSE token streaming</span>
-python scripts/serve.py --checkpoint checkpoints/nexoralm_aligned_300m.pt --port 8000
-
-<span style="color: #64748b;"># 4. Connect interactive terminal chat client</span>
-python scripts/chat_cli.py</code></pre>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <div class="brand" style="justify-content: center; margin-bottom: 0.75rem;">
-      <span>NEXORA<span class="gradient-text">LM</span></span>
-      <span class="brand-badge">126M</span>
-    </div>
-    <p class="footer-text">
-      Engineered by Ravi Kishore | Decoder-Only Foundation Architecture & Full Lifecycle Suite
-    </p>
-    <div class="footer-links">
-      <a href="https://github.com/Ravikishore710/NexoraLM" target="_blank">GitHub Repository</a>
-      <a href="https://github.com/Ravikishore710" target="_blank">GitHub Profile</a>
-      <a href="#architecture">Architecture Specification</a>
-      <a href="#pipeline">Benchmark Matrix</a>
-    </div>
-  </footer>
+    </main>
+  </div>
 
   <script src="app.js"></script>
 </body>

@@ -5,11 +5,22 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from src.inference.generator import NexoraGenerator
 from src.model.transformer import NexoraConfig, NexoraLM
 from src.tokenizer.bpe import NexoraTokenizer
 
 app = FastAPI(title="NexoraLM API", version="0.1.0")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 model_instance: Optional[NexoraLM] = None
 tokenizer_instance: Optional[NexoraTokenizer] = None

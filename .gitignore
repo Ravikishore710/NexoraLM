@@ -9,11 +9,23 @@ build/
 .venv/
 env/
 venv/
+
+# Large model checkpoints and weights (>100MB)
+*.pt
+*.bin
+*.safetensors
 checkpoints/*.pt
 checkpoints/*.safetensors
+kaggle_*/logs/*.pt
+kaggle_*/logs/*.bin
+
+# Keep structure
 !checkpoints/.gitkeep
 outputs/*
 !outputs/.gitkeep
+!outputs/evaluation_report.json
+!outputs/evaluation_report_300m.json
+
 .env
 data/raw/
 data/processed/

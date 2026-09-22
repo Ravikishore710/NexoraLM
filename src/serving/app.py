@@ -47,10 +47,12 @@ class ChatMessage(BaseModel):
 class ChatCompletionRequest(BaseModel):
     messages: List[ChatMessage]
     max_tokens: int = Field(default=256, ge=1, le=2048)
-    temperature: float = Field(default=0.7, ge=0.0, le=2.0)
-    top_p: float = Field(default=0.9, ge=0.0, le=1.0)
-    top_k: int = Field(default=50, ge=0)
+    temperature: float = Field(default=0.6, ge=0.0, le=2.0)
+    top_p: float = Field(default=0.85, ge=0.0, le=1.0)
+    top_k: int = Field(default=40, ge=0)
+    repetition_penalty: float = Field(default=1.2, ge=1.0, le=2.0)
     stream: bool = False
+
 
 def init_app(model: NexoraLM, tokenizer: NexoraTokenizer, device: str = "cpu"):
     global model_instance, tokenizer_instance, generator_instance
@@ -128,7 +130,8 @@ def create_chat_completion(req: ChatCompletionRequest):
                 max_new_tokens=req.max_tokens,
                 temperature=req.temperature,
                 top_p=req.top_p,
-                top_k=req.top_k
+                top_k=req.top_k,
+                repetition_penalty=req.repetition_penalty
             ):
                 # Filter out special tags if any
                 if token_text in ["<EOS>", "<|assistant|>", "<|user|>", "<|system|>"]:
@@ -147,8 +150,10 @@ def create_chat_completion(req: ChatCompletionRequest):
         max_new_tokens=req.max_tokens,
         temperature=req.temperature,
         top_p=req.top_p,
-        top_k=req.top_k
+        top_k=req.top_k,
+        repetition_penalty=req.repetition_penalty
     )
+
     return {
         "id": f"chatcmpl-{int(time.time()*1000)}",
         "choices": [{"message": {"role": "assistant", "content": text}, "finish_reason": "stop"}]

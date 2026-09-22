@@ -21,11 +21,13 @@ kaggle_*/logs/*.bin
 
 # Keep structure
 !checkpoints/.gitkeep
-outputs/*
-!outputs/.gitkeep
-!outputs/evaluation_report.json
-!outputs/evaluation_report_300m.json
+
+# Local documentation & artifacts (kept on local machine, excluded from GitHub)
+docs/
+outputs/
+kaggle_*/
 
 .env
 data/raw/
 data/processed/
+

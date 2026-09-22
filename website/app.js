@@ -244,10 +244,14 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify({
           messages: allMessages,
           max_tokens: 180,
-          temperature: 0.7,
+          temperature: 0.8,
+          top_p: 0.92,
+          top_k: 50,
+          repetition_penalty: 1.25,
           stream: true
         })
       });
+
 
       if (!response.ok) {
         throw new Error(`NexoraLM Backend HTTP ${response.status}: ${response.statusText}`);

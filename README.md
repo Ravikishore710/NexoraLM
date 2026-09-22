@@ -126,9 +126,7 @@ NexoraLM/
 │   └── serving/        # FastAPI inference server with SSE streaming & CORS
 ├── configs/            # Parameterized YAML configs for all training phases
 ├── scripts/            # Pipeline runners (pretrain, sft, lora, qlora, dpo, quantize, serve)
-├── tests/              # 22 automated unit tests covering math, shapes, and serving
-├── docs/               # 14 complete engineering architecture & review dossiers
-└── outputs/            # Empirical evaluation logs and benchmark reports
+└── tests/              # 22 automated unit tests covering math, shapes, and serving
 ```
 
 ---

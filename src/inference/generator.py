@@ -61,7 +61,8 @@ class NexoraGenerator:
         repetition_penalty: float = 1.1,
         use_cache: bool = True
     ) -> str:
-        input_ids = self.tokenizer.encode(prompt, add_bos=True)
+        add_bos = not prompt.startswith("<BOS>")
+        input_ids = self.tokenizer.encode(prompt, add_bos=add_bos)
         tokens = list(input_ids)
         curr_input = torch.tensor([input_ids], dtype=torch.long, device=self.device)
 
@@ -102,9 +103,11 @@ class NexoraGenerator:
         top_p: float = 0.9,
         repetition_penalty: float = 1.1
     ) -> Generator[str, None, None]:
-        input_ids = self.tokenizer.encode(prompt, add_bos=True)
+        add_bos = not prompt.startswith("<BOS>")
+        input_ids = self.tokenizer.encode(prompt, add_bos=add_bos)
         tokens = list(input_ids)
         curr_input = torch.tensor([input_ids], dtype=torch.long, device=self.device)
+
 
         kv_caches = None
         for _ in range(max_new_tokens):

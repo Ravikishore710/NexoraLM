@@ -117,11 +117,14 @@ def create_chat_completion(req: ChatCompletionRequest):
     if generator_instance is None or tokenizer_instance is None:
         raise HTTPException(status_code=503, detail="Model not initialized")
 
-    formatted = tokenizer_instance.apply_chat_template([m.model_dump() for m in req.messages])
+    # A 126M model is sensitive to noisy context. Window to the most recent conversation turn(s).
+    msgs = req.messages[-2:] if len(req.messages) > 2 else req.messages
+    formatted = tokenizer_instance.apply_chat_template([m.model_dump() for m in msgs])
     # Append assistant trigger token so model generates the response directly
     prompt = tokenizer_instance.decode(formatted["input_ids"], skip_special_tokens=False)
     if not prompt.endswith("<|assistant|>\n"):
         prompt += "<|assistant|>\n"
+
 
     if req.stream:
         def stream_chat():

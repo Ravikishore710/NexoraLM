@@ -62,11 +62,11 @@ class NexoraTokenizer:
     def unk_id(self) -> int:
         return self.tokenizer.token_to_id("<UNK>")
 
-    def apply_chat_template(self, messages: List[Dict[str, str]]) -> Dict[str, List[int]]:
+    def apply_chat_template(self, messages: List[Dict[str, str]], is_training: bool = False) -> Dict[str, List[int]]:
         input_ids = [self.bos_id]
         labels = [-100]
 
-        for msg in messages:
+        for i, msg in enumerate(messages):
             role = msg["role"]
             content = msg["content"]
             header = f"<|{role}|>\n"
@@ -81,9 +81,11 @@ class NexoraTokenizer:
             else:
                 labels.extend([-100] * (len(h_ids) + len(b_ids)))
 
-        input_ids.append(self.eos_id)
-        labels.append(self.eos_id)
+        if is_training:
+            input_ids.append(self.eos_id)
+            labels.append(self.eos_id)
         return {"input_ids": input_ids, "labels": labels}
+
 
     def save(self, path: str):
         os.makedirs(os.path.dirname(path) if os.path.dirname(path) else ".", exist_ok=True)
